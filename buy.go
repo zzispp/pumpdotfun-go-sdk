@@ -11,7 +11,6 @@ import (
 	"github.com/gagliardetto/solana-go/programs/system"
 	"github.com/gagliardetto/solana-go/programs/token"
 	"github.com/gagliardetto/solana-go/rpc"
-	confirm "github.com/gagliardetto/solana-go/rpc/sendAndConfirmTransaction"
 	"github.com/gagliardetto/solana-go/rpc/ws"
 	"github.com/zzispp/pumpdotfun-go-sdk/pump"
 )
@@ -82,15 +81,10 @@ func BuyToken(
 	if err != nil {
 		return "", fmt.Errorf("can't sign transaction: %w", err)
 	}
-	// Send transaction, and wait for confirmation:
-	sig, err := confirm.SendAndConfirmTransaction(
-		context.TODO(),
-		rpcClient,
-		wsClient,
-		tx,
-	)
+	// Send transaction:
+	sig, err := rpcClient.SendTransaction(context.TODO(), tx)
 	if err != nil {
-		return "", fmt.Errorf("can't send and confirm new transaction: %w", err)
+		return "", fmt.Errorf("can't send transaction: %w", err)
 	}
 	return sig.String(), nil
 }
